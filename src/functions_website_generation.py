@@ -14,4 +14,12 @@ def copy_directory(src, dest):
         src_path = os.path.join(src, item)
         dest_path = os.path.join(dest, item)
         # item is a file or directory
-        
+        if os.path.isfile(src_path):
+            shutil.copy(src_path, dest_path)
+            # This above checks whether the item is a file, if so, it copies the src_path to the dest_path
+            # The parameter is src_path as that is the path we want to copy
+            print(f"Copied file: {src_path} to {dest_path}")  # This logs for visability into what is happening
+        elif os.path.isdir(src_path):
+            copy_directory(src_path, dest_path)
+
+
