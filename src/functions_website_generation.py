@@ -2,9 +2,9 @@ import os
 import shutil
 
 def copy_directory(src, dest):
+    clear_directory(dest)
     # I need this function to copy all the data and files in one directory and then paste them into another directory, we can do this!
-    if not os.path.exists(dest):
-        os.makedirs(dest)
+
     # This if statement above check whether the destination directory exsists first before anything else is done
     # If the directory does not exsist, then we make the destination directory, now we shall go on to code the copying of source directory content
     for item in os.listdir(src):
@@ -22,4 +22,11 @@ def copy_directory(src, dest):
         elif os.path.isdir(src_path):
             copy_directory(src_path, dest_path)
 
-
+def clear_directory(directory):
+    if os.path.exists(directory):
+        shutil.rmtree(directory)
+        print(f"Removed directory and its contents: {directory}")
+    clean_directory = os.makedirs(directory)
+    print(f"Created clean directory: {directory}")
+    return clean_directory
+# This function removes the destination directory and then recreates it as a clean one each time
