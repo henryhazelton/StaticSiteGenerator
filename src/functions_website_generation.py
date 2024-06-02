@@ -36,34 +36,40 @@ def clear_directory(directory):
 def extract_title(markdown):
     lines = markdown.split("\n")
     for line in lines:
-        if line.startswith("# ") not in lines:
-            raise Exception("Markdown file must contain a h1 heading")
         if line.startswith("# "):
-            return line
+            return str(line.strip("# ").strip)
+    raise Exception("Markdown file must contain a h1 heading")
     
 def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
-    # Below will read the file from "from_path"
-    markdown_file = open("content/index.md", "r")
-    markdown_file_contents = markdown_file.read()
-    markdown_file.close()
-    # This section above should open the markdown file located at "from_path", store the contents of the file in the variable "markdown_file_contents"
-    # and then close the file which we opened.
-    # We will now repeat for the file located at "template_path"
-    template_file = open("template.html", "r")
-    template_file_contents = template_file.read()
-    template_file.close()
-    markdown_file_to_HTML = markdown_to_html_node(markdown_file_contents)
-    title = str(extract_title(markdown_file_contents))
+
+    # Read markdown file
+
+    with open(from_path, "r") as markdown_file:
+        markdown_file_contents = markdown_file.read()
+    
+    # Read template file
+
+    with open(template_path, "r") as template_file:
+        template_file_contents = template_file.read()
+    
+    # Convert markdown to HTML  
+
+    markdown_to_HTML = markdown_to_html_node(markdown_file_contents)
+
+    # Extract title from markdown
+
+    title = extract_title(markdown_file_contents)
+
+    # Replace placeholders in template
+
     HTML_file = template_file_contents.replace("{{ Title }}", title)
-    HTML_file = HTML_file.replace("{{ Content }}", str(markdown_file_contents))
-    copy_directory(from_path, dest_path)
-    for item in os.listdir(from_path):
-        src_path = os.path.join(from_path, item)
-        dest_path = os.path.join(dest_path, item)
-        if os.path.isfile(src_path):
-            shutil.copy(src_path, dest_path)
-        
+    HTML_file = HTML_file.replace("{{ Content }}", markdown_to_HTML.to_html())
 
+    # Write HTML to destination path
 
-# Im not sure the above is right, markdown file to html is now HTML not markup, so I need to extract the title from markdown, not html
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    with open(dest_path, "w") as output_file:
+        output_file.write(HTML_file)
+
+    print(f"Page successfully generated at {dest_path}")
