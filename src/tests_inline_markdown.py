@@ -128,6 +128,34 @@ class TestImagesAndLinkFunctions(unittest.TestCase):
             ],
             new_nodes,
         )
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev)"
+        )
+        self.assertListEqual(
+            [
+                ("link", "https://boot.dev"),
+                ("another link", "https://blog.boot.dev"),
+            ],
+            matches,
+        )
+
+    def test_split_links(self):
+        node = TextNode(
+            "This is text with a [link](https://boot.dev) and [another link](https://blog.boot.dev) with text that follows",
+            text_type_text,
+        )
+        new_nodes = split_nodes_links([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with a ", text_type_text),
+                TextNode("link", text_type_link, "https://boot.dev"),
+                TextNode(" and ", text_type_text),
+                TextNode("another link", text_type_link, "https://blog.boot.dev"),
+                TextNode(" with text that follows", text_type_text),
+            ],
+            new_nodes,
+        )
 
 class TesttextToTextNode(unittest.TestCase):
     def test_text_to_textnodes(self):
@@ -146,6 +174,26 @@ class TesttextToTextNode(unittest.TestCase):
         TextNode("link", text_type_link, "https://boot.dev"),
         ]
         self.assertListEqual(result, expected_result)
+
+    def test_text_to_textnodes(self):
+        nodes = text_to_textnodes(
+            "This is **text** with an *italic* word and a `code block` and an ![image](https://i.imgur.com/zjjcJKZ.png) and a [link](https://boot.dev)"
+        )
+        self.assertListEqual(
+            [
+                TextNode("This is ", text_type_text),
+                TextNode("text", text_type_bold),
+                TextNode(" with an ", text_type_text),
+                TextNode("italic", text_type_italic),
+                TextNode(" word and a ", text_type_text),
+                TextNode("code block", text_type_code),
+                TextNode(" and an ", text_type_text),
+                TextNode("image", text_type_image, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and a ", text_type_text),
+                TextNode("link", text_type_link, "https://boot.dev"),
+            ],
+            nodes,
+        )
 
 if __name__ == "__main__":
     unittest.main()

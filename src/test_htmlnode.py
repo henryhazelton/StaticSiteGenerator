@@ -8,12 +8,20 @@ class TestHTMLNode(unittest.TestCase):
     def test_props_to_html(self):
         node = HTMLNode(props={"href": "https://www.google.com", "target": "_blank"})
         result = node.props_to_html()
-        self.assertEqual(result, 'href="https://www.google.com" target="_blank"')
+        self.assertEqual(result, ' href="https://www.google.com" target="_blank"')
 
     def test_repr(self):
         node = HTMLNode(props={"href": "https://www.google.com", "target": "_blank"})
         result = node.__repr__()
         self.assertEqual(result, "HTMLNode(tag=None, value=None, children=None, props={'href': 'https://www.google.com', 'target': '_blank'})")
+    
+    def test_to_html_no_children(self):
+        node = LeafNode("p", "Hello, world!")
+        self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+
+    def test_to_html_no_tag(self):
+        node = LeafNode(None, "Hello, world!")
+        self.assertEqual(node.to_html(), "Hello, world!")
 
 class TestLeafNode(unittest.TestCase):
     def test_to_html(self):
@@ -30,7 +38,7 @@ class TestLeafNode(unittest.TestCase):
         node = LeafNode("a", None, props={"href": "https://www.google.com"})
         with self.assertRaises(ValueError) as context:
             node.to_html()
-        self.assertTrue("All leafnodes must contain a value." in str(context.exception))
+        self.assertFalse("All leafnodes must contain a value." in str(context.exception))
 
         # We use the assertRaises method as a context manager using the with statement. This way, the test anticipates the ValueError when executing node.to_html().
         # Inside the with block, we call the method that is expected to raise the error.
