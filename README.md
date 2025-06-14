@@ -1,2 +1,2 @@
-# my-static-site-wcgw
+# StaticSiteGenerator
 Building my first static site, purely a learning exercise and for fun. 
