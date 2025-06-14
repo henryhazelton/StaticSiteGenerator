@@ -19,11 +19,9 @@ def markdown_to_blocks(markdown):
         block_strings.append(stripped_block)
     return block_strings
 
-# --------------------------------------------------------------------------------------
-
 def block_to_block_type(markdown_block):
     line_in_block = markdown_block.split("\n")
-    ####################################################
+
     if (markdown_block.startswith("# ")
         or markdown_block.startswith("## ")
         or markdown_block.startswith("### ")
@@ -32,12 +30,10 @@ def block_to_block_type(markdown_block):
         or markdown_block.startswith("###### ")
     ):
         return block_type_heading
-    ####################################################
+
     if len(markdown_block) > 1 and line_in_block[0].startswith("```") and line_in_block[-1].startswith("```"):
         return block_type_code
-    ####################################################
-    
-    ####################################################
+
     elif markdown_block.startswith(">"):
         is_quote_block = True
         for line in line_in_block:
@@ -47,7 +43,7 @@ def block_to_block_type(markdown_block):
                 is_quote_block = False
         if is_quote_block:
             return block_type_quote
-    ####################################################
+
     elif markdown_block.startswith("*") or markdown_block.startswith("-"):
         is_unordered_list = True
         for line in line_in_block:
@@ -57,8 +53,8 @@ def block_to_block_type(markdown_block):
                 is_unordered_list = False
         if is_unordered_list:
             return block_type_unordered_list
-    ####################################################
-    elif markdown_block.startswith("1. "):
+
+    elif markdown_block[0].isdigit() and markdown_block[1] == ".":
         is_ordered_list = True
         list_number = 0
         for line in line_in_block:
@@ -69,11 +65,10 @@ def block_to_block_type(markdown_block):
                 is_ordered_list = False
         if is_ordered_list:
             return block_type_ordered_list
-    ####################################################
+
     else:
         return block_type_paragraph
 
-# --------------------------------------------------------------------------------------
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
     children = []
@@ -84,7 +79,7 @@ def text_to_children(text):
 # This ^ funciton above is used to create the children property that will be passed into ParentNode.
 # How and why it is done this way is a mystery to me and something I will slowly get through, however I will not be defeated!
 
-###########################################
+
 def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     children = []
@@ -93,25 +88,24 @@ def markdown_to_html_node(markdown):
         children.append(html_node)
     main_html_node = ParentNode(tag="div", children=children)
     return main_html_node
-###########################################
 
 def block_to_html_node(block):
     block_type = block_to_block_type(block)
     if block_type == block_type_paragraph:
         return paragraph_block_to_html_node(block)
-    elif block_type == block_type_code:
+    if block_type == block_type_code:
         return code_block_to_html_node(block)
-    elif block_type == block_type_heading:
+    if block_type == block_type_heading:
         return heading_block_to_html_node(block)
-    elif block_type == block_type_quote:
+    if block_type == block_type_quote:
         return quote_block_to_html_node(block)
-    elif block_type == block_type_ordered_list:
+    if block_type == block_type_ordered_list:
         return ordered_list_to_html_node(block)
-    elif block_type == block_type_unordered_list:
+    if block_type == block_type_unordered_list:
         return unordered_list_block_to_html_node(block)
     else:
         raise ValueError("Invalid block type given.")
-###########################################
+
 def paragraph_block_to_html_node(block):
     single_line_block = ' '.join(block.split('\n'))
     children = text_to_children(single_line_block)
