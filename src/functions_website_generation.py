@@ -55,14 +55,16 @@ def generate_page(from_path, template_path, dest_path, basepath):
     template = template.replace("{{ Title }}", title)
     template = template.replace("{{ Content }}", html)
 
-    template = template.replace('href="/', f'href="{basepath}')
-    template = template.replace('src="/', f'src="{basepath}')
+    # More specific replacements for the template
+    template = template.replace('href="/index.css"', f'href="{basepath}index.css"')
+    template = template.replace('src="/images/', f'src="{basepath}images/')
 
     dest_dir_path = os.path.dirname(dest_path)
     if dest_dir_path != "":
         os.makedirs(dest_dir_path, exist_ok=True)
     to_file = open(dest_path, "w")
     to_file.write(template)
+    to_file.close() # Good to close files!
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for filename in os.listdir(dir_path_content):
