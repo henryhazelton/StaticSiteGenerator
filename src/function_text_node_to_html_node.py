@@ -1,4 +1,3 @@
-from textnode import TextNode
 from htmlnode import LeafNode
 
 text_type_text = "text"
@@ -24,4 +23,3 @@ def text_node_to_html_node(text_node):
         return LeafNode("img", "", {"src": text_node.url, "alt": text_node.text})
     else:
         raise ValueError("Invalid text type entered.")
-

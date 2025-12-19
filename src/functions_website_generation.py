@@ -4,20 +4,22 @@ import shutil
 from pathlib import Path
 from functions_block_markdown import markdown_to_html_node
 
+
 def copy_directory(src, dest):
     if not os.path.exists(dest):
         os.makedirs(dest)
         print(f"Created clean directory: {dest}")
-    
+
     for item in os.listdir(src):
         src_path = os.path.join(src, item)
         dest_path = os.path.join(dest, item)
-        
+
         if os.path.isfile(src_path):
             shutil.copy(src_path, dest_path)
             print(f"Copied file: {src_path} to {dest_path}")
         elif os.path.isdir(src_path):
             copy_directory(src_path, dest_path)  # Recursive call
+
 
 def clear_directory(directory):
     if os.path.exists(directory):
@@ -26,7 +28,10 @@ def clear_directory(directory):
     clean_directory = os.makedirs(directory)
     print(f"Created clean directory: {directory}")
     return clean_directory
+
+
 # This function removes the destination directory and then recreates it as a clean one each time
+
 
 def extract_title(markdown):
     lines = markdown.split("\n")
@@ -34,7 +39,7 @@ def extract_title(markdown):
         if line.startswith("# "):
             return str(line.strip("# ").strip())
     raise Exception("Markdown file must contain a h1 heading")
-    
+
 
 def generate_page(from_path, template_path, dest_path, basepath):
     print(f" * {from_path} {template_path} -> {dest_path}")
@@ -64,7 +69,8 @@ def generate_page(from_path, template_path, dest_path, basepath):
         os.makedirs(dest_dir_path, exist_ok=True)
     to_file = open(dest_path, "w")
     to_file.write(template)
-    to_file.close() # Good to close files!
+    to_file.close()  # Good to close files!
+
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     for filename in os.listdir(dir_path_content):

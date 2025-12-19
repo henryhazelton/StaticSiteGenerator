@@ -4,11 +4,8 @@ from textnode import (
     TextNode,
     text_type_text,
     text_type_bold,
-    text_type_italic,
-    text_type_code,
-    text_type_image,
-    text_type_link,
 )
+
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -19,12 +16,12 @@ class TestTextNode(unittest.TestCase):
     def test_url_none(self):
         node = TextNode("This is a text node", "bold", None)
         self.assertIsNone(node.url)
-    
+
     def test_test_type(self):
         node = TextNode("This is a test node", "italic", "https://example.com")
         node2 = TextNode("This is a test node", "bold", "https://example.com")
         self.assertNotEqual(node, node2)
-    
+
     def test_empty_text_raises_error(self):
         with self.assertRaises(ValueError):
             node = TextNode(None, "bold", "https://example.com")
